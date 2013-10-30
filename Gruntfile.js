@@ -2,7 +2,18 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
+  	
     pkg: grunt.file.readJSON('package.json'),
+    
+    // Lint definitions
+    jshint: {
+            files: ['src/jquery.imageartdirection.js'],
+            options: {
+                jshintrc: '.jshintrc'
+            }
+    },
+
+    // Minify definitions
     uglify: {
       options: {
 		banner: "/*\n" +
@@ -21,10 +32,11 @@ module.exports = function(grunt) {
     }
   });
 
-  // Load the plugin that provides the "uglify" task.
+  // Load the plugin the tasks
+  grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Default task(s).
-  grunt.registerTask('default', ['uglify']);
+  grunt.registerTask('default', ['jshint', 'uglify']);
 
 };
