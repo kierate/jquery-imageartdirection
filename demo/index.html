@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>jQuery Image Art Direction</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+		<script src="../src/jquery.imageartdirection.js"></script>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+		<style>
+			div, * {
+				margin: 0;
+			}
+			.half {
+				float: left;
+				width: 48%;
+				padding: 0.7%;
+			}
+			.pattern {
+				overflow: hidden;
+			}
+			.landscape {
+				display: block;
+				max-width: 100%;
+				height: auto;
+			}
+			h1 {
+				font-family: 'Open Sans', sans-serif;
+				font-size: 18px;
+    			font-style: italic;
+    			font-weight: 300;
+				margin: 10px 0;
+			}
+			.pattern + h1 {
+				margin-top: 20px;
+			}
+			a {
+				color: #4183C4;
+    			text-decoration: none;
+			}
+			.half + .half {
+				border-left: 1px solid #DDD;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div class="half">
+			<h1><a href="http://www.flickr.com/photos/barackobamadotcom/5795228030/sizes/l/in/photostream/">Original image</a> resized by the browser</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized by the browser" class="landscape">
+			</div>
+			<h1>Resized with art direction (crop ratio 25%)</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized with art direction (crop ratio 25%)" class="landscape artdirection" data-artdirection-focus-point="484,235" data-artdirection-crop-ratio="25%">
+			</div>
+			<h1>Resized with art direction (default crop ratio of 50%)</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized with art direction (default crop ratio of 50%)" class="landscape artdirection" data-artdirection-focus-point="484,235">
+			</div>
+			<h1>Resized with art direction (crop ratio 75%)</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized with art direction (crop ratio 75%)" class="landscape artdirection" data-artdirection-focus-point="484,235" data-artdirection-crop-ratio="75%">
+			</div>
+		</div>
+
+		<div class="half">
+			<h1><a href="http://www.flickr.com/photos/whitehouse/8077970711/sizes/l/in/photostream/">Original image</a> resized by the browser</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized by the browser" class="landscape">
+			</div>
+			<h1>Resized with art direction (crop ratio 25%)</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized with art direction (crop ratio 25%)" class="landscape artdirection" data-artdirection-focus-point="552,421" data-artdirection-crop-ratio="25%">
+			</div>
+			<h1>Resized with art direction (default crop ratio of 50%)</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized with art direction (default crop ratio of 50%)" class="landscape artdirection" data-artdirection-focus-point="552,421">
+			</div>
+			<h1>Resized with art direction (crop ratio 75%)</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized with art direction (crop ratio 75%)" class="landscape artdirection" data-artdirection-focus-point="552,421" data-artdirection-crop-ratio="75%">
+			</div>
+		</div>
+
+		<script>
+		$(window).load(function() {
+			$(function() {
+				$('img.artdirection').artDirectionCropResize();
+			});
+		});
+		</script>
+	</body>
+</html>
