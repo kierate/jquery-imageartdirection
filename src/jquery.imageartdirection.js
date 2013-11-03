@@ -68,7 +68,7 @@
 			focusPointXCenterCorrection = parseInt((currentImageWidth/2 - focusPointXResized) * bgResizePercentage / 100, 10),
 			focusPointYCenterCorrection = parseInt((currentImageHeight/2 - focusPointYResized) * bgResizePercentage / 100, 10),
 			//a few empty declarations
-			div,
+			imageWrapperDiv,
 			alreadyWrapped,
 			data;
 
@@ -104,28 +104,28 @@
 		alreadyWrapped = $element.parent("div.img-artdirection-wrapper").length === 1;
 		if (!alreadyWrapped) {
 			//if the img is not wrapped then create div and wrap around
-			div = $("<div></div>").addClass("img-artdirection-wrapper");
+			imageWrapperDiv = $("<div></div>").addClass("img-artdirection-wrapper");
 		} else {
 			//if the img is already wrapped then just update the css below
-			div = $element.parent("div.img-artdirection-wrapper");
+			imageWrapperDiv = $element.parent("div.img-artdirection-wrapper");
 		}
 
 		//set up the div with a background image.
 		//this background is resized but is slightly bigger than the div,
 		//so the parts that are overflowing are cropped
-		div
-			.css("width", "100%")
-			.css("height", "auto")
-			.css("background-repeat", "no-repeat")
-			.css("background-image", "url(" + $element.attr("src") + ")")
-			.css("background-position", "-" + cropFromLeft + "px -" + cropFromTop + "px")
-			.css("background-size", (currentImageWidth + cropFromLeft + cropFromRight) + "px " +
-									(currentImageHeight + cropFromTop + cropFromBottom) + "px");
+		imageWrapperDiv
+						.css("width", "100%")
+						.css("height", "auto")
+						.css("background-repeat", "no-repeat")
+						.css("background-image", "url(" + $element.attr("src") + ")")
+						.css("background-position", "-" + cropFromLeft + "px -" + cropFromTop + "px")
+						.css("background-size", (currentImageWidth + cropFromLeft + cropFromRight) + "px " +
+												(currentImageHeight + cropFromTop + cropFromBottom) + "px");
 
 		//wrap the image with a div if not yet done (first run)
 		if (!alreadyWrapped) {
 			//not using hide() as that makes the size unavailable for subsequent runs (i.e. resizes)
-			$element.wrap(div).css("visibility" , "hidden");
+			$element.wrap(imageWrapperDiv).css("visibility" , "hidden");
 		}
 
 		//if there is a completion function defined then gather
