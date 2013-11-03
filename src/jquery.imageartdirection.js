@@ -63,59 +63,41 @@
 			cropFromBottom = (focusBottomTotal * cropPercentage / 100),
 			bgWidth = (currentImageWidth + cropFromLeft + cropFromRight),
 			bgResizePercentage = (fullImageWidth - bgWidth) / fullImageWidth * 100,
-			diffRight = ((currentImageWidth/2) - (focusPointX * (100-bgResizePercentage) / 100 - parseInt(cropFromLeft, 10))),
-			diffLeft = ((currentImageWidth/2) - (focusPointX * (100-bgResizePercentage) / 100 - parseInt(cropFromRight, 10))),
-			halfDiffRight = diffRight/2,
-			halfDiffLeft = diffLeft/2,
+			focusPointXResized = Math.round(focusPointX * (100-bgResizePercentage) / 100 - parseInt(cropFromLeft, 10)),
+			focusPointYResized = Math.round(focusPointY * (100-bgResizePercentage) / 100 - parseInt(cropFromTop, 10)),
+			focusPointXCenterCorrection = parseInt((currentImageWidth/2 - focusPointXResized) * bgResizePercentage / 100, 10),
+			focusPointYCenterCorrection = parseInt((currentImageHeight/2 - focusPointYResized) * bgResizePercentage / 100, 10),
 			//a few empty declarations
-			posLeft,
-			posTop,
 			div,
 			alreadyWrapped,
 			data;
 
-		//bring the focus point as close to the center of the image as possible
-		if (diffRight < 0) { //the focus point is on the right side of the image
-			cropFromLeft -= halfDiffRight;
-			cropFromRight += halfDiffRight;
-			if (cropFromLeft < 0) {
-				cropFromRight += cropFromLeft;
-				cropFromLeft = 0;
-			}
-			if (cropFromRight < 0) {
-				cropFromLeft += cropFromRight;
-				cropFromRight = 0;
-			}
-		} else if (diffLeft < 0) { //the focus point is on the left side of the image
-			cropFromLeft += halfDiffLeft;
-			cropFromRight -= halfDiffLeft;
-			if (cropFromRight < 0) {
-				cropFromLeft += cropFromRight;
-				cropFromRight = 0;
-			}
-			if (cropFromLeft < 0) {
-				cropFromRight += cropFromLeft;
-				cropFromLeft = 0;
-			}
+		//if the focus point after resizing is not in the center then bring it closer
+		if (currentImageWidth/2 - focusPointXResized != 0) {
+			cropFromLeft -= focusPointXCenterCorrection;
+			cropFromRight += focusPointXCenterCorrection;
+		}
+		if (currentImageHeight/2 - focusPointYResized != 0) {
+			cropFromTop -= focusPointYCenterCorrection;
+			cropFromBottom += focusPointYCenterCorrection;
 		}
 
-		//make corrections to how much is cropped on each side,
-		//this is for cases where the focus point is on far left
-		//or far right of the image
-		if (focusLeftTotal < currentImageWidth / 2) {
+		//make sure we always fill up the space and not crop too much from each side
+		if (cropFromLeft < 0) {
 			cropFromRight += cropFromLeft;
 			cropFromLeft = 0;
-		} else if (focusRightTotal < currentImageWidth / 2) {
+		}
+		if (cropFromRight < 0) {
 			cropFromLeft += cropFromRight;
 			cropFromRight = 0;
 		}
-
-		//set up the X/Y position of the resized image
-		posLeft = cropFromLeft;
-		posTop = cropFromTop;
-		//correct the left position to make sure we always fill in the right hand side
-		if (cropFromLeft + currentImageWidth > fullImageWidth - cropFromLeft) {
-			posLeft = cropFromLeft + cropFromRight;
+		if (cropFromTop < 0) {
+			cropFromBottom += cropFromTop;
+			cropFromTop = 0;
+		}
+		if (cropFromBottom < 0) {
+			cropFromTop += cropFromBottom;
+			cropFromBottom = 0;
 		}
 
 		//now that everything is calculated put a div around the target image
@@ -136,7 +118,7 @@
 			.css("height", "auto")
 			.css("background-repeat", "no-repeat")
 			.css("background-image", "url(" + $element.attr("src") + ")")
-			.css("background-position", "-" + posLeft + "px -" + posTop + "px")
+			.css("background-position", "-" + cropFromLeft + "px -" + cropFromTop + "px")
 			.css("background-size", (currentImageWidth + cropFromLeft + cropFromRight) + "px " +
 									(currentImageHeight + cropFromTop + cropFromBottom) + "px");
 
@@ -159,9 +141,7 @@
 					cropFromTop: cropFromTop,
 					cropFromBottom: cropFromBottom,
 					focusPointX: focusPointX,
-					focusPointY: focusPointY,
-					posLeft: posLeft,
-					posTop: posTop
+					focusPointY: focusPointY
 				};
 			settings.onCropResizeComplete.call( $element, data );
 		}
@@ -176,6 +156,12 @@
 			cropRatio = $.trim(element.attr("data-artdirection-crop-ratio"));
 		}
 		cropRatio = cropRatio.replace("%", "") / 100;
+
+		//if the global setting or the one for this image was
+		//incorrect then assume crop ratio of 50%
+		if (isNaN(cropRatio)) {
+			return 0.5;
+		}
 
 		return cropRatio;
 	}
