@@ -73,11 +73,11 @@
 			data;
 
 		//if the focus point after resizing is not in the center then bring it closer
-		if (currentImageWidth/2 - focusPointXResized != 0) {
+		if (currentImageWidth/2 - focusPointXResized !== 0) {
 			cropFromLeft -= focusPointXCenterCorrection;
 			cropFromRight += focusPointXCenterCorrection;
 		}
-		if (currentImageHeight/2 - focusPointYResized != 0) {
+		if (currentImageHeight/2 - focusPointYResized !== 0) {
 			cropFromTop -= focusPointYCenterCorrection;
 			cropFromBottom += focusPointYCenterCorrection;
 		}
