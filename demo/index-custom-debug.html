@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>jQuery Image Art Direction</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+		<script src="../src/jquery.imageartdirection.js"></script>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+		<style>
+			* {
+				font-family: 'Open Sans', sans-serif;
+				margin: 0;
+			}
+			.half {
+				float: left;
+				width: 48%;
+				padding: 0.7%;
+			}
+			.pattern {
+				overflow: hidden;
+			}
+			.landscape {
+				display: block;
+				max-width: 100%;
+				height: auto;
+			}
+			h1 {
+				font-size: 18px;
+    			font-style: italic;
+    			font-weight: 300;
+				margin: 10px 0;
+			}
+			.pattern + h1 {
+				margin-top: 20px;
+			}
+			a {
+				color: #4183C4;
+    			text-decoration: none;
+			}
+			p {
+				padding: 0.7%;
+				font-size: 14px;
+			}
+			.half + .half {
+				border-left: 1px solid #DDD;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div class="intro">
+			<p>
+				This example shows how images are resized and cropped when the plugin is used with custom configuration.
+				The red lines indicate the middle of the image and the blue dot is the focus point.
+				Resize your window to see how much is cropped from the original images.
+			</p>
+		</div>
+
+		<div class="half">
+			<h1><a href="http://www.flickr.com/photos/barackobamadotcom/5795228030/sizes/l/in/photostream/">Original image</a> resized by the browser</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized by the browser" class="landscape">
+			</div>
+			<h1>Resized with art direction (default crop ratio of 30%)</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized with art direction (crop ratio 30%)" class="landscape artdirection" data-artdirection-focus-point="484,235">
+			</div>
+			<h1>Resized with art direction (crop ratio 60%)</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized with art direction (default crop ratio of 60%)" class="landscape artdirection" data-artdirection-focus-point="484,235" data-artdirection-crop-ratio="60%">
+			</div>
+			<h1>Resized with art direction (crop ratio 90%)</h1>
+			<div class="pattern">
+				<img src="http://farm3.staticflickr.com/2494/5795228030_7bb7cc0e3b_b.jpg" alt="Resized with art direction (crop ratio 90%)" class="landscape artdirection" data-artdirection-focus-point="484,235" data-artdirection-crop-ratio="90%">
+			</div>
+		</div>
+
+		<div class="half">
+			<h1><a href="http://www.flickr.com/photos/whitehouse/8077970711/sizes/l/in/photostream/">Original image</a> resized by the browser</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized by the browser" class="landscape">
+			</div>
+			<h1>Resized with art direction (default crop ratio of 30%)</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized with art direction (crop ratio 30%)" class="landscape artdirection" data-artdirection-focus-point="552,421">
+			</div>
+			<h1>Resized with art direction (crop ratio 60%)</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized with art direction (default crop ratio of 60%)" class="landscape artdirection" data-artdirection-focus-point="552,421" data-artdirection-crop-ratio="60%">
+			</div>
+			<h1>Resized with art direction (crop ratio 90%)</h1>
+			<div class="pattern">
+				<img src="http://farm9.staticflickr.com/8049/8077970711_ffa01a65bc_b.jpg" alt="Resized with art direction (crop ratio 90%)" class="landscape artdirection" data-artdirection-focus-point="552,421" data-artdirection-crop-ratio="90%">
+			</div>
+		</div>
+
+		<script>
+		$(window).load(function() {
+
+			$(function() {
+				$('img.artdirection').artDirectionCropResize({
+					cropRatio: "30%",
+					onCropResizeComplete: function ( data ) {
+						var $element = this;
+						$element.siblings('div.img-artdirection-half-horizontal').remove();
+						$element.siblings('div.img-artdirection-half-vertical').remove();
+						$element.siblings('div.img-artdirection-focus-point').remove();
+						
+						var halfHorizontal = $("<div></div>").addClass('img-artdirection-half-horizontal');
+						var halfVertical = $("<div></div>").addClass('img-artdirection-half-vertical');
+						
+						var divOffset = $element.parent('div.img-artdirection-wrapper').offset();
+						halfHorizontal.css('display', 'block')
+									  .css('width', '2px')
+									  .css('z-index', '190')
+									  .css('position', 'absolute')
+									  .css('opacity', '0.5')
+									  .css('background-color', 'red')
+									  .css('height', data.currentImageHeight)
+									  .css('left', (divOffset.left + data.currentImageWidth/2))
+									  .css('top', divOffset.top);
+						$element.parent('div.img-artdirection-wrapper').append(halfHorizontal);
+						halfVertical.css('display', 'block')
+									  .css('height', '2px')
+									  .css('z-index', '190')
+									  .css('position', 'absolute')
+									  .css('opacity', '0.5')
+									  .css('background-color', 'red')
+									  .css('width', data.currentImageWidth)
+									  .css('left', divOffset.left)
+									  .css('top', (divOffset.top + data.currentImageHeight/2));
+						$element.parent('div.img-artdirection-wrapper').append(halfVertical);
+						
+						var bgWidth = (data.currentImageWidth + data.cropFromLeft + data.cropFromRight);
+						var bgHeight = (data.currentImageHeight + data.cropFromTop + data.cropFromBottom);
+						var bgResizePercentage = (data.fullImageWidth - bgWidth) / data.fullImageWidth * 100;
+						var focusPoint = $("<div></div>").addClass('img-artdirection-focus-point');
+						var focusPointDisplaySize = 10;		
+						var focusPointXResized = Math.round(data.focusPointX * (100-bgResizePercentage) / 100 - parseInt(data.cropFromLeft)) - focusPointDisplaySize/2;		
+						var focusPointYResized = Math.round(data.focusPointY * (100-bgResizePercentage) / 100 - parseInt(data.cropFromTop)) - focusPointDisplaySize/2;		
+						focusPoint.css('display', 'block')
+								  .css('width', focusPointDisplaySize)
+								  .css('height', focusPointDisplaySize)
+								  .css('border-radius', focusPointDisplaySize/2)
+								  .css('z-index', '191')
+								  .css('position', 'absolute')
+								  .css('opacity', '0.5')
+								  .css('background-color', 'blue')
+								  .css('left', divOffset.left + focusPointXResized)
+								  .css('top', divOffset.top + focusPointYResized);
+						$element.parent('div.img-artdirection-wrapper').append(focusPoint);
+					}
+				});
+			});
+		});
+		</script>
+	</body>
+</html>
