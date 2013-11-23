@@ -1,4 +1,4 @@
-Image Art Direction
+Image Art Direction [![Build Status](https://travis-ci.org/kierate/jquery-imageartdirection.png)](https://travis-ci.org/kierate/jquery-imageartdirection)
 ===================
 
 Image Art Direction is a simple jQuery plugin that enables basic [art][1] [direction][2] on images in a responsive design by defining focus point coordinates.
