@@ -45,32 +45,66 @@
 			fullImageHeight = element.naturalHeight,
 			currentImageWidth = $element.width(),
 			currentImageHeight = $element.height(),
-			//get the focus point that is set for this image
-			focusPointCoordinates = $element.attr("data-artdirection-focus-point").split(","),
-			focusPointX = parseInt($.trim(focusPointCoordinates[0]), 10),
-			focusPointY = parseInt($.trim(focusPointCoordinates[1]), 10),
 			//calculations for resizing and crop
 			cropRatio = getElementCropRatio($element),
 			resizePercentage = (fullImageWidth - currentImageWidth) / fullImageWidth * 100,
 			cropPercentage = resizePercentage * cropRatio,
-			focusLeftTotal = focusPointX,
-			focusRightTotal = fullImageWidth - focusPointX,
-			focusTopTotal = focusPointY,
-			focusBottomTotal = fullImageHeight - focusPointY,
-			cropFromLeft = (focusLeftTotal * cropPercentage / 100),
-			cropFromRight = (focusRightTotal * cropPercentage / 100),
-			cropFromTop = (focusTopTotal * cropPercentage / 100),
-			cropFromBottom = (focusBottomTotal * cropPercentage / 100),
-			bgWidth = (currentImageWidth + cropFromLeft + cropFromRight),
-			bgResizePercentage = (fullImageWidth - bgWidth) / fullImageWidth * 100,
-			focusPointXResized = Math.round(focusPointX * (100-bgResizePercentage) / 100 - parseInt(cropFromLeft, 10)),
-			focusPointYResized = Math.round(focusPointY * (100-bgResizePercentage) / 100 - parseInt(cropFromTop, 10)),
-			focusPointXCenterCorrection = parseInt((currentImageWidth/2 - focusPointXResized) * bgResizePercentage / 100, 10),
-			focusPointYCenterCorrection = parseInt((currentImageHeight/2 - focusPointYResized) * bgResizePercentage / 100, 10),
 			//a few empty declarations
+			focusPointCoordinates,
+			focusPointX,
+			focusPointY,
+			focusLeftTotal,
+			focusRightTotal,
+			focusTopTotal,
+			focusBottomTotal,
+			cropFromLeft,
+			cropFromRight,
+			cropFromTop,
+			cropFromBottom,
+			bgWidth,
+			bgResizePercentage,
+			focusPointXResized,
+			focusPointYResized,
+			focusPointXCenterCorrection,
+			focusPointYCenterCorrection,
 			imageWrapperDiv,
 			alreadyWrapped,
 			data;
+
+		//get the focus point that is set for this image
+		focusPointCoordinates = $element.attr("data-artdirection-focus-point");
+		if (focusPointCoordinates === undefined || focusPointCoordinates === false) {
+			throw new Error("No data-artdirection-focus-point attribute defined");
+		}
+		focusPointCoordinates = focusPointCoordinates.split(",");
+
+		if (focusPointCoordinates.length !== 2) {
+			throw new Error("Not enough coordinates provided in data-artdirection-focus-point attribute");
+		}
+		focusPointX = parseInt($.trim(focusPointCoordinates[0]), 10);
+		focusPointY = parseInt($.trim(focusPointCoordinates[1]), 10);
+		if (isNaN(focusPointX)) {
+			throw new Error("X coordinate incorrect in data-artdirection-focus-point attribute");
+		}
+		if (isNaN(focusPointY)) {
+			throw new Error("Y coordinate incorrect in data-artdirection-focus-point attribute");
+		}
+
+		//calculate how much to crop and resize
+		focusLeftTotal = focusPointX;
+		focusRightTotal = fullImageWidth - focusPointX;
+		focusTopTotal = focusPointY;
+		focusBottomTotal = fullImageHeight - focusPointY;
+		cropFromLeft = Math.round(focusLeftTotal * cropPercentage / 100);//parseInt(focusLeftTotal * cropPercentage / 100, 10);
+		cropFromRight =  Math.round(focusRightTotal * cropPercentage / 100);//parseInt(focusRightTotal * cropPercentage / 100, 10);
+		cropFromTop =  Math.round(focusTopTotal * cropPercentage / 100);//parseInt(focusTopTotal * cropPercentage / 100, 10);
+		cropFromBottom =  Math.round(focusBottomTotal * cropPercentage / 100);//parseInt(focusBottomTotal * cropPercentage / 100, 10);
+		bgWidth = (currentImageWidth + cropFromLeft + cropFromRight);
+		bgResizePercentage = (fullImageWidth - bgWidth) / fullImageWidth * 100;
+		focusPointXResized = Math.round(focusPointX * (100-bgResizePercentage) / 100 - parseInt(cropFromLeft, 10));
+		focusPointYResized = Math.round(focusPointY * (100-bgResizePercentage) / 100 - parseInt(cropFromTop, 10));
+		focusPointXCenterCorrection = parseInt((currentImageWidth/2 - focusPointXResized) * bgResizePercentage / 100, 10);
+		focusPointYCenterCorrection = parseInt((currentImageHeight/2 - focusPointYResized) * bgResizePercentage / 100, 10);
 
 		//if the focus point after resizing is not in the center then bring it closer
 		if (currentImageWidth/2 - focusPointXResized !== 0) {
