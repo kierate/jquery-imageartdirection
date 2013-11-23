@@ -1,29 +1,29 @@
 {
-        "name": "jquery-imageartdirection",
-        "title": "jQuery Image Art Direction",
-        "description": "Art direction for responsive images",
-        "keywords": [
-                "art direction",
-                "responsive images"
-        ],
-        "author": "Michal Kierat",
-        "repository": {
-                "type" : "git",
-                "url" : "https://github.com/kierate/jquery-imageartdirection.git"
-        },
-        "licenses": [
-                {
-                        "type": "MIT",
-                        "url": "https://raw.github.com/kierate/jquery-imageartdirection/master/LICENSE"
-                }
-        ],
-        "homepage": "https://github.com/kierate/jquery-imageartdirection/",
-        "version": "1.0.0",
-        "devDependencies": {
-                "grunt": "~0.4.1",
-                "grunt-cli": "~0.1.7",
-                "grunt-contrib-jshint": "~0.4.3",
-                "grunt-contrib-uglify": "~0.2.0"
-        }
+  "name": "jquery-imageartdirection",
+  "title": "jQuery Image Art Direction",
+  "description": "Art direction for responsive images",
+  "keywords": [
+    "art direction",
+    "responsive images"
+  ],
+  "author": "Michal Kierat",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kierate/jquery-imageartdirection.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.github.com/kierate/jquery-imageartdirection/master/LICENSE"
+    }
+  ],
+  "homepage": "https://github.com/kierate/jquery-imageartdirection/",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-cli": "~0.1.7",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-qunit": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0"
+  }
 }
-

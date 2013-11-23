@@ -1,0 +1,314 @@
+<!--
+https://github.com/zachleat/BigText/blob/master/test/bigtextTest.js
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="http://code.jquery.com/qunit/qunit-git.js"></script>
+
+		<script src="../src/jquery.imageartdirection.js"></script>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			.fixture-wrapper {
+				width: 100%;
+				height: auto;
+			}
+			.landscape {
+				display: block;
+				max-width: 100%;
+				height: auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<h1 id="qunit-header">Tests for <code>jquery.imageartdirection.js</code></h1>
+		<h2 id="qunit-banner"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+
+		<script>
+		$(function() {
+
+			var image_index = 0;
+
+			//=================================================================
+			//=================================================================
+			module('Basics');
+
+			test("Plugin exists", function() {
+				ok($.isFunction($.fn.artDirectionCropResize), 'Plugin is registered');
+			});
+
+			asyncTest("Wrapper created with correct width", function() {
+				setSimpleFixtureHtml("2000,1331");
+				$('#test-image' + image_index).load(function() {
+					$('#test-image' + image_index).artDirectionCropResize();
+					start();
+
+					var $image_wrapper = $('#test-image' + image_index).parent("div.img-artdirection-wrapper");
+					equal($image_wrapper.length, 1, 'The image was wrapped with img-artdirection-wrapper');
+					equal($image_wrapper.width(), $('#qunit-fixture').width(), 'The wrapper is takes up all available space');
+				});
+			});
+
+			asyncTest("Wrapper created for multiple images", function() {
+				image_index++;
+
+				var fixture_html;
+				fixture_html = '<div id="fixture-wrapper' + image_index + '" class="fixture-wrapper">';
+				fixture_html+= '<img id="test-image' + image_index + 'a" src="5795228030_ddbd327d13_o_4000.jpg" alt="Resized by the browser" class="landscape artdirection" data-artdirection-focus-point="2000,1331" />';
+				fixture_html+= '<img id="test-image' + image_index + 'b" src="5795228030_ddbd327d13_o_4000.jpg" alt="Resized by the browser" class="landscape artdirection" data-artdirection-focus-point="1000,665" />';
+				fixture_html+= '<img id="test-image' + image_index + 'c" src="5795228030_ddbd327d13_o_4000.jpg" alt="Resized by the browser" class="landscape artdirection" data-artdirection-focus-point="3000,665" />';
+				fixture_html+= '<img id="test-image' + image_index + 'd" src="5795228030_ddbd327d13_o_4000.jpg" alt="Resized by the browser" class="landscape artdirection" data-artdirection-focus-point="1000,1996" />';
+				fixture_html+= '<img id="test-image' + image_index + 'e" src="5795228030_ddbd327d13_o_4000.jpg" alt="Resized by the browser" class="landscape artdirection" data-artdirection-focus-point="3000,1996" />';
+				fixture_html+= '</div>';
+
+				$('#qunit-fixture').html(fixture_html);
+
+				var loaded = 0;
+
+				$('.artdirection').load(function() {
+					loaded++;
+
+					if (loaded === 5) {
+						$('.artdirection').artDirectionCropResize();
+						start();
+
+						equal($('div.img-artdirection-wrapper').length, 5, 'All images wrapped with img-artdirection-wrapper');
+					}
+					
+				});
+			});
+
+			asyncTest("Source image is hidden", function() {
+				setSimpleFixtureHtml("2000,1331");
+
+				$('#test-image' + image_index).load(function() {
+					$('#test-image' + image_index).artDirectionCropResize();
+					start();
+
+					equal($('#test-image' + image_index).css('visibility'), 'hidden', 'The original image is hidden');
+				});
+				
+			});
+
+
+			//=================================================================
+			//=================================================================
+			module('Coordinate attribute errors');
+
+			asyncTest("Missing attribute", function() {
+				setSimpleFixtureHtml();
+				$( '#test-image' + image_index).load(function() {
+					throws(
+						function() {
+							$('#test-image' + image_index).artDirectionCropResize();
+						},
+						/No data-artdirection-focus-point attribute defined/,
+						"Error thrown with no data-artdirection-focus-point attribute"
+					);
+
+					start();
+				});
+				
+			});
+
+			asyncTest("Empty attribute value", function() {
+				setSimpleFixtureHtml("");
+				$('#test-image' + image_index).load(function() {
+					throws(
+						function() {
+							$('#test-image' + image_index).artDirectionCropResize();
+						},
+						/Not enough coordinates provided in data-artdirection-focus-point attribute/,
+						"Error thrown with empty data-artdirection-focus-point attribute"
+					);
+
+					start();
+				});
+				
+			});
+
+			asyncTest("Incorrect X coordinate", function() {
+				setSimpleFixtureHtml(",abcdef");
+				$('#test-image' + image_index).load(function() {
+					throws(
+						function() {
+							$('#test-image' + image_index).artDirectionCropResize();
+						},
+						/X coordinate incorrect in data-artdirection-focus-point attribute/,
+						"Error thrown with incorrect X coordinate in data-artdirection-focus-point attribute"
+					);
+
+					start();
+				});
+				
+			});
+
+			asyncTest("Incorrect Y coordinate", function() {
+				setSimpleFixtureHtml("123,abcdef");
+				$('#test-image' + image_index).load(function() {
+					throws(
+						function() {
+							$('#test-image' + image_index).artDirectionCropResize();
+						},
+						/Y coordinate incorrect in data-artdirection-focus-point attribute/,
+						"Error thrown with incorrect Y coordinate in data-artdirection-focus-point attribute"
+					);
+
+					start();
+				});
+				
+			});
+
+
+			//=================================================================
+			//=================================================================
+			module('Cropping and resizing with focus point in the center of the image');
+
+			testPositionAndSize("Ratio 50% (default)", "2000,1331", null, null,
+								[["750", "499"], ["2500", "1664"]], [["875", "582"], ["2251", "1497"]]);
+
+			testPositionAndSize("Ratio 75% (plugin setting)", "2000,1331", null, "75%",
+								[["1125", "749"], ["3250", "2164"]], [["1313", "873"], ["3126", "2079"]]);
+
+			testPositionAndSize("Ratio 75% (attribute setting)", "2000,1331", "75%", null,
+								[["1125", "749"], ["3250", "2164"]], [["1313", "873"], ["3126", "2079"]]);
+
+
+			//=================================================================
+			//=================================================================
+			module('Cropping and resizing with focus point in the different parts of the image');
+
+			testPositionAndSize("Ratio 50% - top left quarter", "1000,665", null, null,
+								[["282", "187"], ["2500", "1664"]], [["384", "255"], ["2251", "1497"]]);
+
+			testPositionAndSize("Ratio 50% - top right quarter", "3000,665", null, null,
+								[["1218", "187"], ["2500", "1664"]], [["1367", "255"], ["2251", "1497"]]);
+
+			testPositionAndSize("Ratio 50% - bottom left quarter", "1000,1996", null, null,
+								[["282", "811"], ["2500", "1664"]], [["384", "909"], ["2251", "1497"]]);
+
+			testPositionAndSize("Ratio 50% - bottom right quarter", "3000,1996", null, null,
+								[["1218", "811"], ["2500", "1664"]], [["1367", "909"], ["2251", "1497"]]);
+
+			testPositionAndSize("Ratio 85% - top right corner", "50,50", "85%", null,
+								[["0", "0"], ["3550", "2363"]], [["5", "16"], ["3475", "2313"]]);
+
+
+
+			/**
+			 * Check the background size. We are allowing a 1px difference between browsers due to rounding differences
+			 */
+			function equalBgSize(actual, expected, message)
+			{
+				//basic parameter check
+				if (!(actual instanceof Array) || !(expected instanceof Array) ||
+					actual.length !== 2 || expected.length !== 2) {
+					//fail here
+					deepEqual(actual, expected, 'Incorrect arguments passed to equalBgSize - both should be an array with width and height');
+					return;
+				}
+
+				//check if we are within the 1px tolerance on both width and height
+				if (Math.abs(expected[0] - actual[0]) > 1 || Math.abs(expected[1] - actual[1]) > 1) {
+					//fail here
+					deepEqual(actual, expected, message);
+					return;
+				}
+
+				//all ok
+				ok (true, message);
+			}
+
+			/**
+			 * Fill in the fixture div with an image in a div.
+			 * Allows providing the coordinates and crop ratio as attributes but both are optional.
+			 */
+			function setSimpleFixtureHtml(focus_point_coordinates, crop_ratio_attribute)
+			{
+				image_index++;
+
+				var fixture_html;
+				fixture_html = '<div id="fixture-wrapper' + image_index + '" class="fixture-wrapper">';
+				fixture_html+= '<img id="test-image' + image_index + '" src="5795228030_ddbd327d13_o_4000.jpg" alt="Resized by the browser" class="landscape artdirection"';
+
+				if (focus_point_coordinates !== null && focus_point_coordinates !== undefined) {
+					fixture_html+= ' data-artdirection-focus-point="' + focus_point_coordinates + '"';
+				}
+
+				if (crop_ratio_attribute !== null && crop_ratio_attribute !== undefined) {
+					fixture_html+= ' data-artdirection-crop-ratio="' + crop_ratio_attribute + '"';
+				}
+
+				fixture_html+= ' />';
+				fixture_html+= '</div>';
+
+				$('#qunit-fixture').html(fixture_html);
+			}
+
+			function testPositionAndSize(description, focus_point_coordinates, crop_ratio_attribute, crop_ratio_option, expectedAt1000, expectedAt500)
+			{
+				asyncTest(description, function() {
+					expect( 6 );
+
+					setSimpleFixtureHtml(focus_point_coordinates, crop_ratio_attribute);
+
+					$('#test-image' + image_index).load(function() {
+						var settings = {};
+						if (crop_ratio_option != null) {
+							settings.cropRatio = crop_ratio_option;
+						}
+						$('#test-image'+ image_index).artDirectionCropResize(settings);
+
+						var $image_wrapper = $('#test-image' + image_index).parent("div.img-artdirection-wrapper");
+						
+						start();
+
+						equal($image_wrapper.width(), 1000, 'The wrapper is 1000px wide');
+
+						var actualBgPosition = $image_wrapper.css('background-position').match(/\d+/g);
+						deepEqual(actualBgPosition, expectedAt1000[0], 'Correct background position for 1000px wrapper');
+
+						var actualBgSize = $image_wrapper.css('background-size').match(/\d+/g);
+						equalBgSize(actualBgSize, expectedAt1000[1], 'Correct background size for 1000px wrapper');
+
+
+						//Imitate a window resize:
+						// - resize the wrapper first and then trigger window resize
+						// - the resize handler in the plugin kicks in and resizes the image
+						$('#fixture-wrapper' + image_index).css('width', '500px');
+						equal($image_wrapper.width(), 500, 'The wrapper is resized to 500px wide');
+						$(window).resize();
+
+
+						stop();
+						setTimeout(function() { //wait for 1 second as the resize event is debaunced in the plugin
+							start();
+
+							var actualBgPosition = $image_wrapper.css('background-position').match(/\d+/g);
+							deepEqual(actualBgPosition, expectedAt500[0], 'Correct background position for 500px wrapper');
+
+							var actualBgSize = $image_wrapper.css('background-size').match(/\d+/g);
+							equalBgSize(actualBgSize, expectedAt500[1], 'Correct background size for 500px wrapper');
+
+						}, 1000);
+
+					});
+					
+				});
+			}
+
+		});
+		</script>
+
+	</body>
+</html>
